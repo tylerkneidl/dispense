@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "yarn workspaces foreach -pt --from '{frontend,backend}' run dev"
+    "dev": "yarn workspaces foreach -ptv run dev"
   },
   "workspaces": [
     "packages/*"
