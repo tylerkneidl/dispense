@@ -14,6 +14,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.get("/api/contacts", (req: Request, res: Response) => {
+  console.log(req.body)
   res.sendStatus(200).send(req.body)
 })
 
