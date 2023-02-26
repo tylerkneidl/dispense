@@ -1,6 +1,9 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import helmet from "helmet";
+import fs from 'fs';
+import path from 'path';
+
 dotenv.config();
 
 const app: Express = express();
@@ -14,12 +17,15 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.get("/api/contacts", (req: Request, res: Response) => {
-  console.log(req.body)
-  res.sendStatus(200).send(req.body)
+  const contacts = fs.readFileSync(path.resolve(__dirname, './very_elaborate_database.txt'), 'utf8')
+
+  res.status(200).json(JSON.parse(contacts))
 })
 
 app.post("/api/contacts", (req: Request, res: Response) => {
-  console.log(req)
+  const contacts = fs.readFileSync(path.resolve(__dirname, './very_elaborate_database.txt'), 'utf8')
+
+  res.status(200).send(req.body)
 })
 
 app.listen(port, () => {
