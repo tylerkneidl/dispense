@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "name": "@dispense-takehome/common",
+  "packageManager": "yarn@4.0.0-rc.39",
+  "devDependencies": {
+    "tsc": "^2.0.4",
+    "typescript": "^4.9.5"
+  }
+}
