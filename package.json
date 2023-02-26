@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "yarn workspaces foreach -pt --from '{frontend,backend}' run dev"
+  },
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ],
+  "packageManager": "yarn@4.0.0-rc.39"
+}
