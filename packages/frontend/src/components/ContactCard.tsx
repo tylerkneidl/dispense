@@ -1,5 +1,4 @@
 import { Contact } from "@dispense-takehome/common";
-import React from "react";
 
 interface ContactCardProps {
   contactInfo: Contact;
@@ -7,19 +6,23 @@ interface ContactCardProps {
 
 const ContactCard = ({ contactInfo }: ContactCardProps) => {
   return (
-    <div>
-      <div>
+    <div className="flex flex-col p-2 w-64 items-center border text-gray-700 bg-white leading-5 rounded-2xl shadow-sm">
+      <div className="flex space-x-1 font-bold">
         <span>{contactInfo.firstName}</span>
         <span>{contactInfo.lastName}</span>
       </div>
-      <span>{contactInfo.email}</span>
+      <div className="flex space-x-1 text-sm leading-4 mb-1">
+        <span className="text-[#8864fc]">{contactInfo.email}</span>
+      </div>
       {contactInfo.includeAddress && (
-        <div>
+        <div className="flex flex-col items-center text-xs ml-1  leading-4">
           <span>{contactInfo.addressOne}</span>
           <span>{contactInfo.addressTwo}</span>
-          <span>{contactInfo.city}</span>
-          <span>{contactInfo.state}</span>
-          <span>{contactInfo.zip}</span>
+          <div>
+            {`
+            ${contactInfo.city}
+            ${contactInfo.state}, ${contactInfo.zip}`}
+          </div>
         </div>
       )}
     </div>

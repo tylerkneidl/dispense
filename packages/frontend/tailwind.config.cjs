@@ -4,7 +4,11 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'Golos': ['Golos Text', 'sans-serif']
+      },
+    },
   },
-  plugins: [],
+  plugins: [require('tailwind-scrollbar')({nocompatible: true})],
 }

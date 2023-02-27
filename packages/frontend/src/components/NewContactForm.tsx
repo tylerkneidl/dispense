@@ -1,29 +1,42 @@
-import { ReactElement } from "react";
-import {
-  FieldErrors,
-  SubmitHandler,
-  useForm,
-  UseFormRegister,
-} from "react-hook-form";
-import {
-  ContactBodySchema,
-  stateAbbrevArray,
-  ContactBody,
-} from "@dispense-takehome/common";
-import { useMutation } from "@tanstack/react-query";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { ContactBody, ContactBodySchema, stateAbbrevArray } from "@dispense-takehome/common";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import Field from "./Field";
+import ErrorMessage from "./ErrorMessage";
+import TextLabel from "./TextLabel";
 
 const NewContactForm = () => {
+  const queryClient = useQueryClient();
+
+  const submitNotification = (type: "success" | "error") => {
+    if (type === "success")
+      toast.success("Contact successfully added!", { position: "top-center" });
+    if (type === "error")
+      toast.error("Something went wrong", { position: "top-center" });
+  };
+
   const addContact = useMutation({
     mutationFn: (newContact: ContactBody) => {
       return axios.post("/api/contacts", newContact);
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["veryUniqueId"] });
+      submitNotification("success");
+    },
+    onError() {
+      submitNotification("error");
+    },
+    onSettled() {
+      reset();
     },
   });
 
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
     watch,
@@ -36,138 +49,97 @@ const NewContactForm = () => {
   const onSubmit: SubmitHandler<ContactBody> = (data) => {
     addContact.mutate(data);
   };
-console.log(errors)
   return (
-    <div className="flex flex-col">
-      <form className="flex-col flex" onSubmit={handleSubmit(onSubmit)}>
-        <TextLabel label="First Name">
-          <TextInput
-            defaultValue="name"
-            fieldName="firstName"
+    <form
+      className="flex-col flex font-Golos font-regular"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <Field
+        label="First Name"
+        placeholder="required"
+        fieldName="firstName"
+        register={register}
+      />
+      <ErrorMessage errors={errors} fieldName="firstName" />
+      <Field
+        label="Last Name"
+        placeholder="optional"
+        fieldName="lastName"
+        register={register}
+      />
+      <Field
+        label="Email"
+        placeholder="required"
+        fieldName="email"
+        register={register}
+      />
+      <ErrorMessage errors={errors} fieldName="email" />
+      <div className="flex">
+        <label
+          className="text-[#8864fc] font-bold my-2 flex space-between"
+          htmlFor="includeAddress"
+        >
+          Include Address?
+        </label>
+        <input
+          type="checkbox"
+          id="includeAddress"
+          className="ml-5 accent-[#8864fc]"
+          {...register("includeAddress")}
+        />
+      </div>
+      {includeAddress && (
+        <div className="flex flex-col">
+          <Field
+            label="Address Line 1"
+            address
+            placeholder="optional"
+            fieldName="addressOne"
             register={register}
           />
-        </TextLabel>
-        {errors.firstName && <span>{errors.firstName.message}</span>}
-        <TextLabel label="Last Name">
-          <TextInput
-            defaultValue="name"
-            fieldName="lastName"
+          <Field
+            label="Address Line 2"
+            address
+            placeholder="optional"
+            fieldName="addressTwo"
             register={register}
           />
-        </TextLabel>
-        <TextLabel label="Email">
-          <TextInput
-            defaultValue="name"
-            fieldName="email"
+          <Field
+            label="City"
+            address
+            placeholder="optional"
+            fieldName="city"
             register={register}
           />
-        </TextLabel>
-        {errors.email && <span>{errors.email.message}</span>}
-        <TextLabel label="Include Address?">
-          <input type="checkbox" {...register("includeAddress")} />
-        </TextLabel>
-        {includeAddress && (
-          <>
-            <TextLabel label="Address Line 1">
-              <TextInput
-                address
-                defaultValue="name"
-                fieldName="addressOne"
-                register={register}
-              />
-            </TextLabel>
-
-            <TextLabel label="Address Line 2">
-              <TextInput
-                address
-                defaultValue="name"
-                fieldName="addressTwo"
-                register={register}
-              />
-            </TextLabel>
-            <TextLabel label="City">
-              <TextInput
-                address
-                defaultValue="name"
-                fieldName="city"
-                register={register}
-              />
-            </TextLabel>
-            <TextLabel label="State">
-              <select {...register("state", { shouldUnregister: true })}>
-                {stateAbbrevArray.map((state) => {
-                  return (
-                    <option key={state} value={state}>
-                      {state}
-                    </option>
-                  );
-                })}
-              </select>
-            </TextLabel>
-            <TextLabel label="Zip Code">
-              <TextInput
-                address
-                defaultValue="name"
-                fieldName="zip"
-                register={register}
-              />
-            </TextLabel>
-            {errors.zip && <span>{errors.zip.message}</span>}
-          </>
-        )}
-        <pre>{JSON.stringify(watch())}</pre>
-        <input type="submit" />
-      </form>
-    </div>
+          <TextLabel label="State">
+            <select
+              className="w-fit border-2 border-gray-500 rounded-2xl px-2 py-1 focus:outline-none focus-visible:outline-none"
+              {...register("state", { shouldUnregister: true })}
+            >
+              {stateAbbrevArray.map((state) => {
+                return (
+                  <option key={state} value={state}>
+                    {state}
+                  </option>
+                );
+              })}
+            </select>
+          </TextLabel>
+          <Field
+            label="Zip Code"
+            address
+            placeholder="optional"
+            fieldName="zip"
+            register={register}
+          />
+        </div>
+      )}
+      <input
+        className="text-lg self-center text-gray-700 text-bold border-[#8864fc] border-2 shadow-xl hover:bg-indigo-100 w-fit rounded-2xl px-2 py-1"
+        type="submit"
+      />
+    </form>
   );
 };
 
 export default NewContactForm;
-
-interface TextLabelProps {
-  children: ReactElement;
-  label: string;
-}
-
-const TextLabel = ({ children, label }: TextLabelProps) => {
-  return (
-    <label>
-      <span>{`${label}: `}</span>
-      {children}
-    </label>
-  );
-};
-
-interface TextInputProps {
-  address?: boolean;
-  fieldName:
-    | "includeAddress"
-    | "firstName"
-    | "lastName"
-    | "email"
-    | "addressOne"
-    | "addressTwo"
-    | "city"
-    | "state"
-    | "zip";
-  defaultValue: string;
-  register: UseFormRegister<ContactBody>;
-}
-
-const TextInput = ({
-  address,
-  defaultValue,
-  fieldName,
-  register,
-}: TextInputProps) => {
-  const isAddressOption = address ? { shouldUnregister: true } : {};
-  return (
-    <>
-      <input
-        defaultValue={defaultValue}
-        {...register(fieldName, isAddressOption)}
-      />
-      ;
-    </>
-  );
-};
