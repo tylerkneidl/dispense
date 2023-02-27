@@ -24,7 +24,7 @@ app.get("/api/contacts", (req: Request, res: Response) => {
 
 app.post("/api/contacts", (req: Request, res: Response) => {
   const contacts = fs.readFileSync(path.resolve(__dirname, './very_elaborate_database.txt'), 'utf8')
-
+  console.log(req.body)
   res.status(200).send(req.body)
 })
 
