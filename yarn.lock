@@ -55,6 +55,7 @@ __metadata:
   dependencies:
     "@dispense-takehome/common": "workspace:^"
     "@hookform/resolvers": "npm:^2.9.11"
+    "@tailwindcss/forms": "npm:^0.5.3"
     "@tanstack/react-query": "npm:^4.24.10"
     "@types/react": "npm:^18.0.27"
     "@types/react-dom": "npm:^18.0.10"
@@ -65,6 +66,8 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     react-hook-form: "npm:^7.43.2"
+    react-toastify: "npm:^9.1.1"
+    tailwind-scrollbar: "npm:^2.1.0"
     tailwindcss: "npm:^3.2.7"
     typescript: "npm:^4.9.3"
     vite: "npm:^4.1.0"
@@ -461,6 +464,17 @@ __metadata:
     "@swc/core-win32-x64-msvc":
       optional: true
   checksum: eeb878fd88a5df1dda67b49657c92f333e0210b6b7469879bf8a22d71a35abfc6f2d40385ecdf5ae1dc3e0afaccf7567a3b1ee180a1f49be42482512aa9e6f10
+  languageName: node
+  linkType: hard
+
+"@tailwindcss/forms@npm:^0.5.3":
+  version: 0.5.3
+  resolution: "@tailwindcss/forms@npm:0.5.3"
+  dependencies:
+    mini-svg-data-uri: "npm:^1.2.3"
+  peerDependencies:
+    tailwindcss: ">=3.0.0 || >= 3.0.0-alpha.1"
+  checksum: f75350cea652c6bfabbf33cc5939d07cbe3e1f4da753511096d3cf71f194985f713f28e5fd3e7b715906c1cf1acc5504ca1fbad5f7a9c2f5429810699cfe6038
   languageName: node
   linkType: hard
 
@@ -1217,6 +1231,13 @@ __metadata:
     strip-ansi: "npm:^6.0.1"
     wrap-ansi: "npm:^7.0.0"
   checksum: 4db0fc81f3dbd46b65840a739a43ce83a69e58d7da5ae701948fbfc14c25d82a02dd3a3dbed5a20828000e93b4bf2217b181a0a089d580af5daf9452e9c9eab3
+  languageName: node
+  linkType: hard
+
+"clsx@npm:^1.1.1":
+  version: 1.2.1
+  resolution: "clsx@npm:1.2.1"
+  checksum: cae17fd0fd5ea449d000c681169a8a6f7add4929b369cae3e2d5b604fba2798b39334121e467dbf6ac752562c28a6894a443f30761b004317c0668eb031af52d
   languageName: node
   linkType: hard
 
@@ -2618,6 +2639,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mini-svg-data-uri@npm:^1.2.3":
+  version: 1.4.4
+  resolution: "mini-svg-data-uri@npm:1.4.4"
+  bin:
+    mini-svg-data-uri: cli.js
+  checksum: 8c8d0a94e35dcd90d69a345c3773e0b4b51cfb1a28588fcd4a3e353588adb42092bb7075c44a81624bed47e5284e2209469745917fb6deeb12d066b50897f0a7
+  languageName: node
+  linkType: hard
+
 "minimatch@npm:^3.0.5, minimatch@npm:^3.1.1, minimatch@npm:^3.1.2":
   version: 3.1.2
   resolution: "minimatch@npm:3.1.2"
@@ -3244,6 +3274,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-toastify@npm:^9.1.1":
+  version: 9.1.1
+  resolution: "react-toastify@npm:9.1.1"
+  dependencies:
+    clsx: "npm:^1.1.1"
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: a6c5f74ed248980b7c0ba17932f3938b5e971afe01954f860cdd5b75f937f81c690ae4c05b978bdcb53d4ee361f5d6eb44f2c832f13974f5aff33a8b91f1c8e2
+  languageName: node
+  linkType: hard
+
 "react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
@@ -3673,6 +3715,15 @@ __metadata:
   version: 1.0.0
   resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
   checksum: 14609489b044de2eaffe0e7549173bb39d6997510ac4b7279d07bf2aafe309205abe172a8c8d248062a24e32ab61a2ae85efc5b4cdf7f932c7cdbe81ca1f39ec
+  languageName: node
+  linkType: hard
+
+"tailwind-scrollbar@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "tailwind-scrollbar@npm:2.1.0"
+  peerDependencies:
+    tailwindcss: 3.x
+  checksum: 7e256a9d38ecfc47175c63a6b515dccbfb8b60a8acab4df69382043122a3a7a420a6df09e1db6ad6363e434d5c3ccc56736c744eba94da326ae8cc6f7dab4baa
   languageName: node
   linkType: hard
 

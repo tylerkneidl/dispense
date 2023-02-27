@@ -1,29 +1,46 @@
-import { ReactElement } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { toast, ToastContainer } from "react-toastify";
 import {
-  FieldErrors,
-  SubmitHandler,
-  useForm,
-  UseFormRegister,
-} from "react-hook-form";
-import {
+  ContactBody,
   ContactBodySchema,
   stateAbbrevArray,
-  ContactBody,
 } from "@dispense-takehome/common";
-import { useMutation } from "@tanstack/react-query";
-import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-
+import Field from "./Field";
+import ErrorMessage from "./ErrorMessage";
+import TextLabel from "./TextLabel";
 
 const NewContactForm = () => {
+  const queryClient = useQueryClient();
+
+  const submitNotification = (type: "success" | "error") => {
+    if (type === "success")
+      toast.success("Contact successfully added!", { position: "top-center" });
+    if (type === "error")
+      toast.error("Something went wrong", { position: "top-center" });
+  };
+
   const addContact = useMutation({
     mutationFn: (newContact: ContactBody) => {
       return axios.post("/api/contacts", newContact);
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["veryUniqueId"] });
+      submitNotification("success");
+    },
+    onError() {
+      submitNotification("error");
+    },
+    onSettled() {
+      reset();
     },
   });
 
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
     watch,
@@ -36,65 +53,75 @@ const NewContactForm = () => {
   const onSubmit: SubmitHandler<ContactBody> = (data) => {
     addContact.mutate(data);
   };
-console.log(errors)
-  return (
-    <div className="flex flex-col">
-      <form className="flex-col flex" onSubmit={handleSubmit(onSubmit)}>
-        <TextLabel label="First Name">
-          <TextInput
-            defaultValue="name"
-            fieldName="firstName"
-            register={register}
-          />
-        </TextLabel>
-        {errors.firstName && <span>{errors.firstName.message}</span>}
-        <TextLabel label="Last Name">
-          <TextInput
-            defaultValue="name"
-            fieldName="lastName"
-            register={register}
-          />
-        </TextLabel>
-        <TextLabel label="Email">
-          <TextInput
-            defaultValue="name"
-            fieldName="email"
-            register={register}
-          />
-        </TextLabel>
-        {errors.email && <span>{errors.email.message}</span>}
-        <TextLabel label="Include Address?">
-          <input type="checkbox" {...register("includeAddress")} />
-        </TextLabel>
-        {includeAddress && (
-          <>
-            <TextLabel label="Address Line 1">
-              <TextInput
-                address
-                defaultValue="name"
-                fieldName="addressOne"
-                register={register}
-              />
-            </TextLabel>
 
-            <TextLabel label="Address Line 2">
-              <TextInput
-                address
-                defaultValue="name"
-                fieldName="addressTwo"
-                register={register}
-              />
-            </TextLabel>
-            <TextLabel label="City">
-              <TextInput
-                address
-                defaultValue="name"
-                fieldName="city"
-                register={register}
-              />
-            </TextLabel>
+  return (
+    <div className="flex flex-col bg-white h-fit p-3 rounded-2xl shadow-md">
+      <form
+        className="flex-col flex font-Golos font-regular"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <Field
+          label="First Name"
+          placeholder="required"
+          fieldName="firstName"
+          register={register}
+        />
+        <ErrorMessage errors={errors} fieldName="firstName" />
+        <Field
+          label="Last Name"
+          placeholder="optional"
+          fieldName="lastName"
+          register={register}
+        />
+        <Field
+          label="Email"
+          placeholder="required"
+          fieldName="email"
+          register={register}
+        />
+        <ErrorMessage errors={errors} fieldName="email" />
+        <div className="flex">
+          <label
+            className="text-[#8864fc] font-bold my-2 flex space-between"
+            htmlFor="includeAddress"
+          >
+            Include Address?
+          </label>
+          <input
+            type="checkbox"
+            id="includeAddress"
+            className="ml-5 accent-[#8864fc]"
+            {...register("includeAddress")}
+          />
+        </div>
+        {includeAddress && (
+          <div className="flex flex-col">
+            <Field
+              label="Address Line 1"
+              address
+              placeholder="optional"
+              fieldName="addressOne"
+              register={register}
+            />
+            <Field
+              label="Address Line 2"
+              address
+              placeholder="optional"
+              fieldName="addressTwo"
+              register={register}
+            />
+            <Field
+              label="City"
+              address
+              placeholder="optional"
+              fieldName="city"
+              register={register}
+            />
             <TextLabel label="State">
-              <select {...register("state", { shouldUnregister: true })}>
+              <select
+                className="w-fit border-2 border-gray-500 rounded-2xl px-2 py-1 focus:outline-none focus-visible:outline-none"
+                {...register("state", { shouldUnregister: true })}
+              >
                 {stateAbbrevArray.map((state) => {
                   return (
                     <option key={state} value={state}>
@@ -104,70 +131,40 @@ console.log(errors)
                 })}
               </select>
             </TextLabel>
-            <TextLabel label="Zip Code">
-              <TextInput
-                address
-                defaultValue="name"
-                fieldName="zip"
-                register={register}
-              />
-            </TextLabel>
-            {errors.zip && <span>{errors.zip.message}</span>}
-          </>
+            <Field
+              label="Zip Code"
+              address
+              placeholder="optional"
+              fieldName="zip"
+              register={register}
+            />
+          </div>
         )}
-        <pre>{JSON.stringify(watch())}</pre>
-        <input type="submit" />
+        <input
+          className="text-lg self-center text-gray-700 text-bold border-[#8864fc] border-2 shadow-xl hover:bg-indigo-100 w-fit rounded-2xl px-2 py-1"
+          type="submit"
+        />
       </form>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      {/* Same as */}
+      <ToastContainer />
+      <img
+        className="w-52 mt-5 mb-1"
+        src="https://assets.website-files.com/5ea9d15f1dc39001c43c80bd/5f58f0aa6ca842699577f18c_dispense-logo.svg"
+      />
     </div>
   );
 };
 
 export default NewContactForm;
-
-interface TextLabelProps {
-  children: ReactElement;
-  label: string;
-}
-
-const TextLabel = ({ children, label }: TextLabelProps) => {
-  return (
-    <label>
-      <span>{`${label}: `}</span>
-      {children}
-    </label>
-  );
-};
-
-interface TextInputProps {
-  address?: boolean;
-  fieldName:
-    | "includeAddress"
-    | "firstName"
-    | "lastName"
-    | "email"
-    | "addressOne"
-    | "addressTwo"
-    | "city"
-    | "state"
-    | "zip";
-  defaultValue: string;
-  register: UseFormRegister<ContactBody>;
-}
-
-const TextInput = ({
-  address,
-  defaultValue,
-  fieldName,
-  register,
-}: TextInputProps) => {
-  const isAddressOption = address ? { shouldUnregister: true } : {};
-  return (
-    <>
-      <input
-        defaultValue={defaultValue}
-        {...register(fieldName, isAddressOption)}
-      />
-      ;
-    </>
-  );
-};
