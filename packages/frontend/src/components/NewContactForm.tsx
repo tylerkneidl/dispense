@@ -34,8 +34,6 @@ const NewContactForm = () => {
   const includeAddress = watch("includeAddress");
 
   const onSubmit: SubmitHandler<ContactBody> = (data) => {
-    console.log("submit");
-    console.log(data);
     addContact.mutate(data);
   };
 console.log(errors)

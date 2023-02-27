@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import fs from 'fs';
 import path from 'path';
-
+import { ContactBody } from "@dispense-takehome/common";
+import { v4 as uuidv4 } from 'uuid';
 dotenv.config();
 
 const app: Express = express();
@@ -23,9 +24,12 @@ app.get("/api/contacts", (req: Request, res: Response) => {
 })
 
 app.post("/api/contacts", (req: Request, res: Response) => {
-  const contacts = fs.readFileSync(path.resolve(__dirname, './very_elaborate_database.txt'), 'utf8')
-  console.log(req.body)
-  res.status(200).send(req.body)
+  const contacts: ContactBody[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, './very_elaborate_database.txt'), 'utf8'))
+  const newContact = req.body
+  newContact['id'] = uuidv4()
+  contacts.push(newContact)
+  fs.writeFileSync((path.resolve(__dirname,'./very_elaborate_database.txt')), JSON.stringify(contacts))
+  res.status(200).json(contacts)
 })
 
 app.listen(port, () => {
